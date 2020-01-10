@@ -366,13 +366,14 @@ public class Service : System.Web.Services.WebService
     //[WebMethod]
     //public void ObtenerFactura_Prueba()
     //{
+    //    object varW = ObtenerFactura("A001308376676", "romanello");
     //    object varR = ObtenerFactura("A001303461593", "RUBENE");
     //}
     [WebMethod]
     public cFactura ObtenerFactura(string pNumeroFactura, string pLoginWeb)
     {
         cFactura resultado = null;
-        //if (VerificarPermisos(CredencialAutenticacion))
+        if (VerificarPermisos(CredencialAutenticacion))
         {
             classTiempo tiempo = new classTiempo("ObtenerFactura");
             try
@@ -1636,7 +1637,7 @@ public class Service : System.Web.Services.WebService
         }
         return false;
     }
-	[WebMethod]
+    [WebMethod]
     public double ObtenerSaldoFinalADiciembrePorCliente(string LoginWeb)
     {
         double resultado = 0;
@@ -1654,5 +1655,4 @@ public class Service : System.Web.Services.WebService
         }
         return resultado;
     }
-
 }

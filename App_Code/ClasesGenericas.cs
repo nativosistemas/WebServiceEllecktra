@@ -674,7 +674,7 @@ public static class dllFuncionesGenerales
         {
         }
     }
-    public static dllEstadosPedido ToConvert(dkInterfaceWeb.EstadosPedido pEstado)
+    /*public static dllEstadosPedido ToConvert(dkInterfaceWeb.EstadosPedido pEstado)
     {
         switch (pEstado)
         {
@@ -697,7 +697,7 @@ public static class dllFuncionesGenerales
                 return dllEstadosPedido.Anulado;
             //    break;
         }
-    }
+    }*/
     public static string ToConvertToString(dkInterfaceWeb.EstadosPedido pEstado)
     {
         switch (pEstado)
@@ -717,6 +717,8 @@ public static class dllFuncionesGenerales
             case dkInterfaceWeb.EstadosPedido.PendienteDeFacturar:
                 return "PendienteDeFacturar";
             //break;
+            case dkInterfaceWeb.EstadosPedido.Detenido:
+                return "Detenido";
             default:
                 return "";
             //    break;
@@ -741,7 +743,7 @@ public static class dllFuncionesGenerales
             resultado.CantidadRenglones = pPedidos.CantidadRenglones;
             resultado.CantidadUnidad = pPedidos.CantidadUnidades;
             resultado.Error = pPedidos.Error;
-            resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
+            //resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
             resultado.EstadoToString = dllFuncionesGenerales.ToConvertToString(pPedidos.Estado);
             resultado.Items = new List<cDllPedidoItem>();
             for (int i = 1; i <= pPedidos.Count(); i++)
@@ -781,7 +783,7 @@ public static class dllFuncionesGenerales
         resultado.CantidadRenglones = pPedidos.CantidadRenglones;
         resultado.CantidadUnidad = pPedidos.CantidadUnidades;
         resultado.Error = pPedidos.Error;
-        resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
+        //resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
         resultado.EstadoToString = dllFuncionesGenerales.ToConvertToString(pPedidos.Estado);
         resultado.Items = new List<cDllPedidoItem>();
         for (int i = 1; i <= pPedidos.Count(); i++)
