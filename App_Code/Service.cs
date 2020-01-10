@@ -1636,5 +1636,23 @@ public class Service : System.Web.Services.WebService
         }
         return false;
     }
+	[WebMethod]
+    public double ObtenerSaldoFinalADiciembrePorCliente(string LoginWeb)
+    {
+        double resultado = 0;
+        if (VerificarPermisos(CredencialAutenticacion))
+        {
+            try
+            {
+                dkInterfaceWeb.ServiciosWEB objServWeb = new dkInterfaceWeb.ServiciosWEB();
+                resultado = objServWeb.ObtenerSaldoFinalADiciembrePorCliente(LoginWeb);
+            }
+            catch (Exception ex)
+            {
+                dllFuncionesGenerales.grabarLog(MethodBase.GetCurrentMethod(), ex, DateTime.Now, LoginWeb);
+            }
+        }
+        return resultado;
+    }
 
 }
