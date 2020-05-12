@@ -25,8 +25,8 @@ public enum dllEstadosPedido
     EnPreparacion = 1,
     EnSucursal = 2,
     Enviado = 3,
-    PendienteDeFacturar = 4
-
+    PendienteDeFacturar = 4,
+    Detenido = 5
 }
 public enum dllEstadoCheque
 {
@@ -51,6 +51,17 @@ public enum dllTipoComprobante
     OSC = 13
 }
 
+public enum dllMotivoDevolucion
+{
+    BienFacturadoMalEnviado = 1,
+    ProductoMalEstado = 2,
+    FacturadoNoPedido = 3,
+    ProductoDeMasSinSerFacturado = 4,
+    VencimientoCorto = 5,
+    ProductoFallaFabricante = 6,
+    Vencido = 7
+}
+
 public class cResumen
 {
     public string Numero { get; set; }
@@ -61,7 +72,6 @@ public class cResumen
     public string PeriodoHastaToString { get; set; }
     public decimal? TotalResumen { get; set; }
     public List<cResumenDetalle> lista { get; set; }
-
 }
 public class cResumenDetalle
 {
@@ -92,7 +102,20 @@ public class cCtaCteMovimiento
     public string Semana { get; set; }
     public dllTipoComprobante TipoComprobante { get; set; }
     public string TipoComprobanteToString { get; set; }
+    public List<cVencimientoResumen> lista { get; set; }
 }
+
+public class cVencimientoResumen
+{
+    public string Tipo { get; set; }
+    public string NumeroComprobante { get; set; }
+    public DateTime? Fecha { get; set; }
+    public string FechaToString { get; set; }
+    public DateTime? FechaVencimiento { get; set; }
+    public string FechaVencimientoToString { get; set; }
+    public double? Importe { get; set; }
+}
+
 public class cFichaCtaCte
 {
     public DateTime Fecha { get; set; }
@@ -182,6 +205,7 @@ public class cFactura
 {
     public string CantidadHojas { get; set; }
     public int CantidadRenglones { get; set; }
+    public string CodigoFormaDePago { get; set; }
     public decimal DescuentoEspecial { get; set; }
     public decimal DescuentoNetos { get; set; }
     public decimal DescuentoPerfumeria { get; set; }
@@ -196,6 +220,7 @@ public class cFactura
     public decimal MontoPercepcionDGR { get; set; }
     public decimal MontoTotal { get; set; }
     public string Numero { get; set; }
+    public int NumeroCuentaCorriente { get; set; }
     public string NumeroRemito { get; set; }
     public int TotalUnidades { get; set; }
     public decimal MontoPercepcionMunicipal { get; set; }
@@ -392,13 +417,47 @@ public class cCbteParaImprimir
 }
 public class cConsObraSocial
 {
-    public string Detalle { get; set; }
+    public  string Detalle { get; set; }
     public DateTime FechaComprobante { get; set; }
     public string FechaComprobanteToString { get; set; }
-    public decimal Importe { get; set; }
-    public string NumeroComprobante { get; set; }
-    public string TipoComprobante { get; set; }
+    public  decimal Importe { get; set; }
+    public  string NumeroComprobante { get; set; }
+    public  string TipoComprobante { get; set; }
 }
+
+public class cLote
+{
+    public string ID { get; set; }
+    public string NombreProducto { get; set; }
+    public string NumeroLote { get; set; }
+    public DateTime? FechaVencimiento { get; set; }
+    public string FechaVencimientoToString { get; set; }
+}
+
+public class cDevolucionItemPrecarga
+{
+    public int dev_numeroitem { get; set; }
+    public int dev_numerocliente { get; set; }
+    public string dev_numerofactura { get; set; }
+    public string dev_numerosolicituddevolucion { get; set; }
+    public string dev_nombreproductodevolucion { get; set; }
+    public DateTime dev_fecha { get; set; }
+    public string dev_fechaToString { get; set; }
+    public dllMotivoDevolucion dev_motivo { get; set; }
+    public int dev_numeroitemfactura { get; set; }
+    public string dev_nombreproductofactura { get; set; }
+    public double dev_cantidad { get; set; }
+    public string dev_numerolote { get; set; }
+    public DateTime dev_fechavencimientolote { get; set; }
+    public string dev_fechavencimientoloteToString { get; set; }
+    public string dev_estado { get; set; }
+    public string dev_mensaje { get; set; }
+    public double dev_cantidadrecibida { get; set; }
+    public double dev_cantidadrechazada { get; set; }
+    public string dev_idsucursal { get; set; }
+    public string dev_numerosolicitudNC { get; set; }
+}
+
 public class Autenticacion : SoapHeader
 {
     private string sUserPass;
@@ -674,7 +733,7 @@ public static class dllFuncionesGenerales
         {
         }
     }
-    /*public static dllEstadosPedido ToConvert(dkInterfaceWeb.EstadosPedido pEstado)
+    public static dllEstadosPedido ToConvert(dkInterfaceWeb.EstadosPedido pEstado)
     {
         switch (pEstado)
         {
@@ -693,11 +752,13 @@ public static class dllFuncionesGenerales
             case dkInterfaceWeb.EstadosPedido.PendienteDeFacturar:
                 return dllEstadosPedido.PendienteDeFacturar;
             //break;
+            case dkInterfaceWeb.EstadosPedido.Detenido:
+                return dllEstadosPedido.Detenido;
             default:
                 return dllEstadosPedido.Anulado;
             //    break;
         }
-    }*/
+    }
     public static string ToConvertToString(dkInterfaceWeb.EstadosPedido pEstado)
     {
         switch (pEstado)
@@ -706,16 +767,16 @@ public static class dllFuncionesGenerales
                 return "Anulado";
             //break;
             case dkInterfaceWeb.EstadosPedido.EnPreparacion:
-                return "EnPreparacion";
+                return "En Preparacion";
             //break;
             case dkInterfaceWeb.EstadosPedido.EnSucursal:
-                return "EnSucursal";
+                return "En Sucursal";
             //break;
             case dkInterfaceWeb.EstadosPedido.Enviado:
                 return "Enviado";
             //break;
             case dkInterfaceWeb.EstadosPedido.PendienteDeFacturar:
-                return "PendienteDeFacturar";
+                return "Pendiente De Facturar";
             //break;
             case dkInterfaceWeb.EstadosPedido.Detenido:
                 return "Detenido";
@@ -743,7 +804,7 @@ public static class dllFuncionesGenerales
             resultado.CantidadRenglones = pPedidos.CantidadRenglones;
             resultado.CantidadUnidad = pPedidos.CantidadUnidades;
             resultado.Error = pPedidos.Error;
-            //resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
+            resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
             resultado.EstadoToString = dllFuncionesGenerales.ToConvertToString(pPedidos.Estado);
             resultado.Items = new List<cDllPedidoItem>();
             for (int i = 1; i <= pPedidos.Count(); i++)
@@ -783,7 +844,7 @@ public static class dllFuncionesGenerales
         resultado.CantidadRenglones = pPedidos.CantidadRenglones;
         resultado.CantidadUnidad = pPedidos.CantidadUnidades;
         resultado.Error = pPedidos.Error;
-        //resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
+        resultado.Estado = dllFuncionesGenerales.ToConvert(pPedidos.Estado);
         resultado.EstadoToString = dllFuncionesGenerales.ToConvertToString(pPedidos.Estado);
         resultado.Items = new List<cDllPedidoItem>();
         for (int i = 1; i <= pPedidos.Count(); i++)
@@ -926,10 +987,24 @@ public static class dllFuncionesGenerales
         obj.NumeroHoja = pResumenDetalle.NumeroHoja != null ? pResumenDetalle.NumeroHoja.ToString() : string.Empty;
         obj.NumeroItem = pResumenDetalle.NumeroItem;
         obj.NumeroResumen = pResumenDetalle.NumeroResumen != null ? pResumenDetalle.NumeroResumen.ToString() : string.Empty;
-        obj.TipoComprobante = (pResumenDetalle.TipoComprobante != null && !string.IsNullOrEmpty(pResumenDetalle.TipoComprobante.ToString()))
-            ?
-            Enum.Parse(typeof(dkInterfaceWeb.TiposComprobante), pResumenDetalle.TipoComprobante.ToString()).ToString() :
+        obj.TipoComprobante = (pResumenDetalle.TipoComprobante != null && !string.IsNullOrEmpty(pResumenDetalle.TipoComprobante.ToString())) 
+            ? 
+            Enum.Parse(typeof(dkInterfaceWeb.TiposComprobante), pResumenDetalle.TipoComprobante.ToString()).ToString():
             string.Empty;
+        return obj;
+    }
+
+    public static cVencimientoResumen ToConvert(dkInterfaceWeb.VtoResumenPorFecha pVto)
+    {
+        DateTime dateValue;
+        cVencimientoResumen obj = new cVencimientoResumen();
+        obj.Tipo = pVto.Tipo;
+        obj.NumeroComprobante = pVto.NumeroComprobante;
+        obj.Fecha = DateTime.TryParse(pVto.Fecha.ToString(), out dateValue) ? (DateTime)pVto.Fecha : (DateTime?)null;
+        obj.FechaToString = obj.Fecha != null ? ((DateTime)obj.Fecha).ToShortDateString() : "";
+        obj.FechaVencimiento = DateTime.TryParse(pVto.FechaVencimiento.ToString(), out dateValue) ? (DateTime)pVto.FechaVencimiento : (DateTime?)null;
+        obj.FechaVencimientoToString = obj.FechaVencimiento != null ? ((DateTime)obj.FechaVencimiento).ToShortDateString() : "";
+        obj.Importe = pVto.Importe;
         return obj;
     }
 
@@ -1000,6 +1075,7 @@ public static class dllFuncionesGenerales
             resultado = new cFactura();
             resultado.CantidadHojas = pObjFactura.CantidadHojas;
             resultado.CantidadRenglones = pObjFactura.CantidadRenglones;
+            resultado.CodigoFormaDePago = pObjFactura.CodigoFormaDePago;
             resultado.DescuentoEspecial = pObjFactura.DescuentoEspecial;
             resultado.DescuentoNetos = pObjFactura.DescuentoNetos;
             resultado.DescuentoPerfumeria = pObjFactura.DescuentoPerfumeria;
@@ -1023,6 +1099,7 @@ public static class dllFuncionesGenerales
             resultado.MontoPercepcionDGR = pObjFactura.MontoPercepcionDGR;
             resultado.MontoTotal = pObjFactura.MontoTotal;
             resultado.Numero = pObjFactura.Numero;
+            resultado.NumeroCuentaCorriente = pObjFactura.NumeroCuentaCorriente;
             resultado.NumeroRemito = pObjFactura.NumeroRemito;
             resultado.TotalUnidades = pObjFactura.TotalUnidades;
             resultado.MontoPercepcionMunicipal = pObjFactura.MontoPercepcionMunicipal;
@@ -1192,5 +1269,129 @@ public static class dllFuncionesGenerales
             obj.Importe = pValor.Importe;//== null ? string.Empty : Convert.ToString(pValor.Importe);
         }
         return obj;
+    }
+    public static cLote ConvertToLote(dkInterfaceWeb.Lote pObjLote)
+    {
+        cLote resultado = null;
+        if (pObjLote != null)
+        {
+            resultado = new cLote();
+            resultado.ID = pObjLote.ID;
+            resultado.NombreProducto = pObjLote.NombreProducto;
+            resultado.NumeroLote = pObjLote.NumeroLote;
+            resultado.FechaVencimiento = pObjLote.FechaVencimiento;
+            DateTime dateValue;
+            resultado.FechaVencimiento = DateTime.TryParse(pObjLote.FechaVencimiento.ToString(), out dateValue) ? (DateTime)pObjLote.FechaVencimiento : (DateTime?)null;
+            resultado.FechaVencimientoToString = resultado.FechaVencimiento != null ? ((DateTime)resultado.FechaVencimiento).ToShortDateString() : string.Empty;
+        }
+        return resultado;
+    }
+    public static cDevolucionItemPrecarga ConvertToItemSolicitudDevCliente(dkInterfaceWeb.SolicitudDevCliente pObjSDC)
+    {
+        cDevolucionItemPrecarga resultado = null;
+        if (pObjSDC != null)
+        {
+            resultado = new cDevolucionItemPrecarga();
+            resultado.dev_numeroitem = pObjSDC.NumeroItem;
+            resultado.dev_numerocliente = pObjSDC.NumeroCliente;
+            resultado.dev_numerofactura = pObjSDC.NumeroFactura;
+            resultado.dev_numerosolicituddevolucion = pObjSDC.NumeroSolicitud;
+            resultado.dev_nombreproductodevolucion = pObjSDC.NombreProductoDevolucion;
+            resultado.dev_fecha = pObjSDC.Fecha;
+            DateTime dateValue;
+            resultado.dev_fecha = DateTime.TryParse(pObjSDC.Fecha.ToString(), out dateValue) ? (DateTime)pObjSDC.Fecha : DateTime.Now;
+            resultado.dev_fechaToString = resultado.dev_fecha!= null ? ((DateTime)resultado.dev_fecha).ToShortDateString() : string.Empty;
+            switch (pObjSDC.Motivo) { 
+                case dkInterfaceWeb.MotivoDevolucion.BienFacturadoMalEnviado:
+                    resultado.dev_motivo = dllMotivoDevolucion.BienFacturadoMalEnviado;
+                    break;
+                case dkInterfaceWeb.MotivoDevolucion.ProductoMalEstado:
+                    resultado.dev_motivo = dllMotivoDevolucion.ProductoMalEstado;
+                    break;
+                case dkInterfaceWeb.MotivoDevolucion.FacturadoNoPedido:
+                    resultado.dev_motivo = dllMotivoDevolucion.FacturadoNoPedido;
+                    break;
+                case dkInterfaceWeb.MotivoDevolucion.ProductoDeMasSinSerFacturado:
+                    resultado.dev_motivo = dllMotivoDevolucion.ProductoDeMasSinSerFacturado;
+                    break;
+                case dkInterfaceWeb.MotivoDevolucion.VencimientoCorto:
+                    resultado.dev_motivo = dllMotivoDevolucion.VencimientoCorto;
+                    break;
+                case dkInterfaceWeb.MotivoDevolucion.ProductoFallaFabricante:
+                    resultado.dev_motivo = dllMotivoDevolucion.ProductoFallaFabricante;
+                    break;
+                case dkInterfaceWeb.MotivoDevolucion.Vencido:
+                    resultado.dev_motivo = dllMotivoDevolucion.Vencido;
+                    break;
+            }
+            resultado.dev_numeroitemfactura = pObjSDC.NumeroItemFactura;
+            resultado.dev_nombreproductofactura = pObjSDC.NombreProductoFactura;
+            resultado.dev_cantidad = pObjSDC.Cantidad;
+            resultado.dev_numerolote = pObjSDC.NumeroLote;
+            resultado.dev_fechavencimientolote = pObjSDC.FechaVencimiento;
+            resultado.dev_fechavencimientolote = DateTime.TryParse(pObjSDC.FechaVencimiento.ToString(), out dateValue) ? (DateTime)pObjSDC.FechaVencimiento : DateTime.Now;
+            resultado.dev_fechavencimientoloteToString = resultado.dev_fechavencimientolote != null ? ((DateTime)resultado.dev_fechavencimientolote).ToShortDateString() : string.Empty;
+            resultado.dev_estado = pObjSDC.Estado;
+            resultado.dev_mensaje = pObjSDC.MensajeRechazo;
+            resultado.dev_cantidadrecibida = pObjSDC.CantidadRecibida;
+            resultado.dev_cantidadrechazada = pObjSDC.CantidadRechazada;
+            resultado.dev_idsucursal = pObjSDC.IDSucursal;
+            resultado.dev_numerosolicitudNC = pObjSDC.NumeroSolicitudNC;
+        }
+        return resultado;
+    }
+    public static dkInterfaceWeb.SolicitudDevCliente ConvertFromItemSolicitudDevCliente(cDevolucionItemPrecarga pObjSDC)
+    {
+        dkInterfaceWeb.SolicitudDevCliente resultado = null;
+        if (pObjSDC != null)
+        {
+            resultado = new dkInterfaceWeb.SolicitudDevCliente();
+            resultado.NumeroItem = pObjSDC.dev_numeroitem;
+            resultado.NumeroCliente = pObjSDC.dev_numerocliente;
+            resultado.NumeroFactura = pObjSDC.dev_numerofactura;
+            resultado.NumeroSolicitud = pObjSDC.dev_numerosolicituddevolucion;
+            resultado.NombreProductoDevolucion = pObjSDC.dev_nombreproductodevolucion;
+            resultado.Fecha = pObjSDC.dev_fecha;
+            DateTime dateValue;
+            resultado.Fecha = DateTime.TryParse(pObjSDC.dev_fecha.ToString(), out dateValue) ? (DateTime)pObjSDC.dev_fecha : DateTime.Now;
+
+            switch (pObjSDC.dev_motivo) { 
+                case dllMotivoDevolucion.BienFacturadoMalEnviado:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.BienFacturadoMalEnviado;
+                    break;
+                case dllMotivoDevolucion.ProductoMalEstado:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.ProductoMalEstado;
+                    break;
+                case dllMotivoDevolucion.FacturadoNoPedido:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.FacturadoNoPedido;
+                    break;
+                case dllMotivoDevolucion.ProductoDeMasSinSerFacturado:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.ProductoDeMasSinSerFacturado;
+                    break;
+                case dllMotivoDevolucion.VencimientoCorto:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.VencimientoCorto;
+                    break;
+                case dllMotivoDevolucion.ProductoFallaFabricante:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.ProductoFallaFabricante;
+                    break;
+                case dllMotivoDevolucion.Vencido:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.Vencido;
+                    break;
+            }
+            resultado.NumeroItemFactura = pObjSDC.dev_numeroitemfactura;
+            resultado.NombreProductoFactura = pObjSDC.dev_nombreproductofactura;
+            resultado.Cantidad = pObjSDC.dev_cantidad;
+            resultado.NumeroLote = pObjSDC.dev_numerolote;
+            resultado.FechaVencimiento = pObjSDC.dev_fechavencimientolote;
+            resultado.FechaVencimiento = Convert.ToDateTime(pObjSDC.dev_fechavencimientoloteToString);
+            //resultado.FechaVencimiento = DateTime.TryParse(pObjSDC.dev_fechavencimientolote.ToString(), out dateValue) ? (DateTime)pObjSDC.dev_fechavencimientolote : DateTime.Now;
+            resultado.Estado = pObjSDC.dev_estado;
+            resultado.MensajeRechazo = pObjSDC.dev_mensaje;
+            resultado.CantidadRecibida = pObjSDC.dev_cantidadrecibida;
+            resultado.CantidadRechazada = pObjSDC.dev_cantidadrechazada;
+            resultado.IDSucursal = pObjSDC.dev_idsucursal;
+            resultado.NumeroSolicitudNC = pObjSDC.dev_numerosolicitudNC;
+        }
+        return resultado;
     }
 }

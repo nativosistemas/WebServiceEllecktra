@@ -16,14 +16,14 @@ using System.Data.SqlClient;
 /// </summary>
 ///     
 public class accesoBD
-{
-    public static string ObtenerConexión()
     {
-        string strConexión;
-        strConexión = ConfigurationManager.ConnectionStrings["db_conexion"].ConnectionString;
-        return strConexión;
+        public static string ObtenerConexión()
+        {
+            string strConexión;
+            strConexión = ConfigurationManager.ConnectionStrings["db_conexion"].ConnectionString;
+            return strConexión;
+        }
     }
-}
 public class cBaseDatos
 {
     public static bool spError(string err_Nombre, string err_Parameters, string err_Data, string err_HelpLink, string err_InnerException, string err_Message, string err_Source, string err_StackTrace, DateTime err_fecha, string err_tipo)
