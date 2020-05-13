@@ -624,7 +624,7 @@ public class Service : System.Web.Services.WebService
                             obj.TipoComprobanteToString = dllFuncionesGenerales.ToConvertToString(objItem.TipoComprobante);
 
                             //PMB20200506 - Vencimientos
-                            obj.lista = ObtenerVencimientosResumenPorFecha(objItem.NumeroComprobante.ToString(), (DateTime)objItem.FechaVencimiento);
+                            //obj.lista = ObtenerVencimientosResumenPorFecha(objItem.NumeroComprobante.ToString(), (DateTime)objItem.FechaVencimiento);
 
                             resultado.Add(obj);
                         }
