@@ -767,16 +767,16 @@ public static class dllFuncionesGenerales
                 return "Anulado";
             //break;
             case dkInterfaceWeb.EstadosPedido.EnPreparacion:
-                return "En Preparacion";
+                return "EnPreparacion";
             //break;
             case dkInterfaceWeb.EstadosPedido.EnSucursal:
-                return "En Sucursal";
+                return "EnSucursal";
             //break;
             case dkInterfaceWeb.EstadosPedido.Enviado:
                 return "Enviado";
             //break;
             case dkInterfaceWeb.EstadosPedido.PendienteDeFacturar:
-                return "Pendiente De Facturar";
+                return "PendienteDeFacturar";
             //break;
             case dkInterfaceWeb.EstadosPedido.Detenido:
                 return "Detenido";
