@@ -1794,6 +1794,38 @@ public class Service : System.Web.Services.WebService
         }
         return lista;
     }
+    [WebMethod]
+    public List<cDevolucionItemPrecarga> ObtenerSolicitudesDevolucionClienteSegunFiltros(DateTime Desde, DateTime Hasta,string NombreProductoF,string NombreProductoD, string NumeroFactura, string LoginWeb)
+    {
+        List<cDevolucionItemPrecarga> lista = null;
+        if (VerificarPermisos(CredencialAutenticacion))
+        {
+            classTiempo tiempo = new classTiempo("ObtenerSolicitudesDevolucionClienteSegunFiltros");
+            try
+            {
+                lista = new List<cDevolucionItemPrecarga>();
+                dkInterfaceWeb.SolicitudDevClienteCOL objResultado;
+                dkInterfaceWeb.ServiciosWEB objServWeb = new dkInterfaceWeb.ServiciosWEB();
+                objResultado = objServWeb.ObtenerSolicitudesDevolucionClienteSegunFiltros(Desde, Hasta, NombreProductoF, NombreProductoD, NumeroFactura, LoginWeb);
+                if (objResultado != null)
+                    for (int i = 1; i <= objResultado.Count(); i++)
+                        lista.Add(dllFuncionesGenerales.ConvertToItemSolicitudDevCliente(objResultado[i]));
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                dllFuncionesGenerales.grabarLog(MethodBase.GetCurrentMethod(), ex, DateTime.Now, Desde, Hasta, NombreProductoF, NombreProductoD, NumeroFactura, LoginWeb);
+                return null;
+            }
+            finally
+            {
+                tiempo.Parar();
+            }
+        }
+        return lista;
+    }
+
 
     [WebMethod]
     public bool EsFacturaConDevolucionesEnProceso(string NumeroFactura, string LoginWeb)
