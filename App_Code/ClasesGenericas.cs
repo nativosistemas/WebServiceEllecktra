@@ -59,7 +59,8 @@ public enum dllMotivoDevolucion
     ProductoDeMasSinSerFacturado = 4,
     VencimientoCorto = 5,
     ProductoFallaFabricante = 6,
-    Vencido = 7
+    Vencido = 7,
+    PedidoPorError = 8
 }
 
 public class cResumen
@@ -1323,6 +1324,9 @@ public static class dllFuncionesGenerales
                 case dkInterfaceWeb.MotivoDevolucion.Vencido:
                     resultado.dev_motivo = dllMotivoDevolucion.Vencido;
                     break;
+                case dkInterfaceWeb.MotivoDevolucion.PedidoPorError:
+                    resultado.dev_motivo = dllMotivoDevolucion.PedidoPorError;
+                    break;
             }
             resultado.dev_numeroitemfactura = pObjSDC.NumeroItemFactura;
             resultado.dev_nombreproductofactura = pObjSDC.NombreProductoFactura;
@@ -1376,6 +1380,9 @@ public static class dllFuncionesGenerales
                     break;
                 case dllMotivoDevolucion.Vencido:
                     resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.Vencido;
+                    break;
+                case dllMotivoDevolucion.PedidoPorError:
+                    resultado.Motivo = dkInterfaceWeb.MotivoDevolucion.PedidoPorError;
                     break;
             }
             resultado.NumeroItemFactura = pObjSDC.dev_numeroitemfactura;
